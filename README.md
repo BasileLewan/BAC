@@ -1,4 +1,2 @@
-# BAC
-bonsoir c'est un test
-ça me va
-ça marche plutôt bien
+# Cahier des charges
+Attention, faut se dépécher
