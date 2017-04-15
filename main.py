@@ -1,30 +1,60 @@
 from random import randint
+from tkinter import*
+from PIL import Image, ImageTk  # Attention : collusion de 'Image' dans Tkinter et pillow
+import tkinter.messagebox
+import tkinter.filedialog
+# import os
 
-""" PIL :
-from PIL import Image
-im = Image.open('gdtst.jpg')
-# im = Image.open('tst.png')
-data = list(im.getdata())
-"""
+######################
+## Autres fonctions ##
+######################
 
-#####################
-## ouverture image ##
-#####################
 
-img = open("tst.pbm")
-type = img.readline()
-ln = img.readline()
-lg = img.readline()
-format = img.readline()
-if (type != "P6") or (format != "255"):
-    print("mauvais format d'image")
-data = []
-for i in range(int(ln) * int(lg)):
-    tmp_data = img.readline()
-    tmp = (tmp_data[0:2], tmp_data[4:6], tmp_data[8:10])
-    data.append(tmp)
-print(data)
+def ouvrir_img():
+    """Choisir une image et céer sa liste de pixels"""
+    global data, img
+    # im = Image.open('gdtst.jpg')
+    # im = Image.open('tst.png')
+    filename = tkinter.filedialog.askopenfilename(title="Ouvrir une image",
+                                                  filetypes=[('jpg files', '.jpg'),
+                                                             ('bmp files', '.bmp'),
+                                                             ('all files', '.*')])  # ouverture de l'image
+    img = Image.open(filename)
+    data = list(img.getdata())
 
+    """ Sans PIL :
+    img = open("tst.pbm")
+    type = img.readline()
+    ln = img.readline()
+    lg = img.readline()
+    format = img.readline()
+    if (type != "P6") or (format != "255"):
+        print("mauvais format d'image")
+    data = []
+    for i in range(int(ln) * int(lg)):
+        tmp_data = img.readline()
+        tmp = (tmp_data[0:2], tmp_data[4:6], tmp_data[8:10])
+        data.append(tmp)
+    """
+    enregistrer_img()
+    afficher_img()
+
+
+def afficher_img():
+    """aficher l'image dans la fenêtre"""
+    global Canevas, fenetre
+    img = ImageTk.PhotoImage(file='tmp.png')  # travaille avec différents types d'images
+    Canevas.config(height=img.height(), width=img.width())  # taille du canvas par rapport à la taille de l'image
+    Canevas.create_image(0, 0, anchor=NW, image=img)
+    Canevas.pack()
+    fenetre.mainloop()
+
+
+def enregistrer_img():
+    """créer une image temporaire à partir des modifications"""
+    ## À FAIRE : retours en arrière/avant
+    img.putdata(data)
+    img.save("tmp.png", "PNG")
 
 ###############
 ##  Filtres  ##
@@ -98,11 +128,30 @@ def bruit_C(valeur):
         p = (pxl[0], pxl[1], pxl[2])
         data[i] = p
 
+##############
+## Fenêtre  ##
+##############
 
+fenetre = Tk()
+fenetre.title("gros logiciel samer")                                  # Titre de la fenetre
+Canevas = Canvas(fenetre)
+
+## création du menu :
+menubar = Menu(fenetre)
+menufichier = Menu(menubar, tearoff=0)
+menufichier.add_command(label="Ouvrir une image", command=ouvrir_img)
+menubar.add_cascade(label="Fichier", menu=menufichier)
+fenetre.config(menu=menubar)
+
+fenetre.mainloop()
+
+""" tests (ne pas prendre en compte)
 valeur = int(input("?"))
 bruit_C(valeur)
-# print(data)
+print(data)
 im.putdata(data)
-# im.save("final.png", "PNG")
+im.save("final.png", "PNG")
 im.show()
-os.system("pause")
+"""
+
+# os.system("pause")
