@@ -44,6 +44,16 @@ def afficher_img():
     """aficher l'image dans la fenêtre"""
     global Canevas, fenetre
     img = ImageTk.PhotoImage(file='tmp.png')  # travaille avec différents types d'images
+    tmp_img = Image.open('tmp.png')
+    if img.height() > fenetre.winfo_screenheight() or img.width() > fenetre.winfo_screenwidth():
+        if img.width() > img.height():
+            definition = (fenetre.winfo_screenwidth(), int(img.height() * (fenetre.winfo_screenwidth() / img.width())))
+            img = ImageTk.PhotoImage(tmp_img.resize(definition))
+        else:
+            definition = (int(img.width() * (fenetre.winfo_screenheight() / img.height())), fenetre.winfo_screenheight())
+            img = ImageTk.PhotoImage(tmp_img.resize(definition))
+    else:
+        pass
     Canevas.config(height=img.height(), width=img.width())  # taille du canvas par rapport à la taille de l'image
     Canevas.create_image(0, 0, anchor=NW, image=img)
     Canevas.pack()
