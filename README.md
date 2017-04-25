@@ -16,9 +16,9 @@ features :
  
  filtres qu'on pourrait faire :
  - ~~seuil~~ [x]
- - ~~inversion des couleurs~~ [x]
+ - [x] ~~inversion des couleurs~~
  - ~~~~noir et blanc~~ [x]
- - sépia [ ]
+ - [x] sépia [ ]
  - luminosité [ ]
  - saturation/vibrance [ ]
  - (ombres) [ ]
