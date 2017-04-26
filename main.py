@@ -1,9 +1,11 @@
 from random import randint
 from tkinter import*
-from PIL import Image, ImageTk  # Attention : collusion de 'Image' dans Tkinter et pillow
+from PIL import Image, ImageTk  # Attention : conflit de 'Image' dans Tkinter et pillow
 import tkinter.messagebox
 import tkinter.filedialog
 # import os
+
+img = None
 
 ######################
 ## Autres fonctions ##
@@ -13,14 +15,16 @@ import tkinter.filedialog
 def ouvrir_img():
     """Choisir une image et céer sa liste de pixels"""
     global data, img
-    # im = Image.open('gdtst.jpg')
-    # im = Image.open('tst.png')
+    # img = Image.open('gdtst.jpg')
+    # img = Image.open('tst.png')
     filename = tkinter.filedialog.askopenfilename(title="Ouvrir une image",
                                                   filetypes=[('jpg files', '.jpg'),
                                                              ('bmp files', '.bmp'),
+                                                             ('png files', '.png'),
                                                              ('all files', '.*')])  # ouverture de l'image
     img = Image.open(filename)
     data = list(img.getdata())
+
 
     """ Sans PIL :
     img = open("tst.pbm")
@@ -66,12 +70,34 @@ def enregistrer_img():
     img.putdata(data)
     img.save("tmp.png", "PNG")
 
+
+def appliquer_filtre(filtre, *arg):
+    """applique le filrte spécifié puis enregistre et affiche l'image"""
+    global img
+
+    if img is None:
+        return
+    else:
+        # chargement(début)
+        filtre(*arg)
+        enregistrer_img()
+        # chargement(fin)
+        afficher_img()
+
+
+def chargement(arg):
+    """affiche un écrazn de chargement pendant que le filtre se met en place"""
+    ## À FAIRE : faire
+    pass
+
+
 ###############
 ##  Filtres  ##
 ###############
 
 def noir_blanc():
     global data
+    print('les crêpes')
     for i in range(len(data)):
         p = data[i]
         r = int((p[0] + p[1] + p[2]) / 3)
@@ -148,10 +174,22 @@ Canevas = Canvas(fenetre)
 
 ## création du menu :
 menubar = Menu(fenetre)
+fenetre.config(menu=menubar)
+
+# menu fichier :
 menufichier = Menu(menubar, tearoff=0)
 menufichier.add_command(label="Ouvrir une image", command=ouvrir_img)
 menubar.add_cascade(label="Fichier", menu=menufichier)
-fenetre.config(menu=menubar)
+
+# menu filtres :
+menufiltres = Menu(menubar, tearoff=0)
+menufiltres.add_command(label="Noir & blanc", command=lambda: appliquer_filtre(noir_blanc))
+menufiltres.add_command(label="Negatif", command=lambda: appliquer_filtre(negatif))
+menufiltres.add_command(label="Seuil", command=lambda: appliquer_filtre(seuil))
+menufiltres.add_command(label="Bruit de chrominance", command=lambda: appliquer_filtre(bruit_C, 10))
+menufiltres.add_command(label="Bruit de luminance", command=lambda: appliquer_filtre(bruit_L, 10))
+menubar.add_cascade(label="Filtres", menu=menufiltres)
+
 
 fenetre.mainloop()
 
