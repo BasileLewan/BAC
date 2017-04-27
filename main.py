@@ -16,13 +16,13 @@ def ouvrir_img():
     """Choisir une image et céer sa liste de pixels"""
     global data, img
     # img = Image.open('gdtst.jpg')
-    # img = Image.open('tst.png')
-    filename = tkinter.filedialog.askopenfilename(title="Ouvrir une image",
+    img = Image.open('tst.png')
+    """filename = tkinter.filedialog.askopenfilename(title="Ouvrir une image",
                                                   filetypes=[('jpg files', '.jpg'),
                                                              ('bmp files', '.bmp'),
                                                              ('png files', '.png'),
                                                              ('all files', '.*')])  # ouverture de l'image
-    img = Image.open(filename)
+    img = Image.open(filename)"""
     data = list(img.getdata())
 
 
@@ -71,29 +71,60 @@ def enregistrer_img():
     img.save("tmp.png", "PNG")
 
 
-def appliquer_filtre(filtre, *arg):
+def appliquer_filtre(filtre, *val):
     """applique le filrte spécifié puis enregistre et affiche l'image"""
-    global img
-
     if img is None:
         return
-    else:
-        # chargement(début)
-        filtre(*arg)
-        enregistrer_img()
-        # chargement(fin)
-        afficher_img()
+    effacer()
+    # chargement(début)
+    print('val = ', val)
+    filtre(*val)
+    enregistrer_img()
+    # chargement(fin)
+    afficher_img()
+
+
+def defvaleur(filtre, val):
+    """demande à l'utilisateur de spécifier une valeur pour un filtre"""
+    curseur = Tk()
+    curseur.title("definition d'une valeur")
+
+    def sortie():
+        curseur.destroy()
+        print('valeur = ', tmp_val)
+        appliquer_filtre(filtre, tmp_val)
+
+    def tmp(val):
+        global tmp_val
+        tmp_val = int(val)
+
+    if val == 1:
+        defval = (0, 100)
+    elif val == 0:
+        defval = (-100, 100)
+    echelle = Scale(curseur, from_=defval[0], to=defval[1], resolution=1, orient=HORIZONTAL, length=300, width=20,
+                    label="valeur du filtre", tickinterval=100, variable=val, command=tmp)
+    echelle.pack(padx=10, pady=10)
+    btn = Button(curseur, text='Ok', command=sortie)
+    btn.pack(pady=10)
+    curseur.mainloop()
 
 
 def chargement(arg):
-    """affiche un écrazn de chargement pendant que le filtre se met en place"""
+    """affiche un écran de chargement pendant que le filtre se met en place"""
     ## À FAIRE : faire
     pass
 
 
+def effacer():
+    """Permet d'effacer l'image qui est affichée"""
+    global Canevas
+    Canevas.delete(ALL)
+
 ###############
 ##  Filtres  ##
 ###############
+
 
 def noir_blanc():
     global data
@@ -101,16 +132,14 @@ def noir_blanc():
     for i in range(len(data)):
         p = data[i]
         r = int((p[0] + p[1] + p[2]) / 3)
-        p = (r, r, r)
-        data[i] = p
+        data[i] = (r, r, r)
 
 
 def negatif():
     global data
     for i in range(len(data)):
         p = data[i]
-        p = (255 - p[0], 255 - p[1], 255 - p[2])
-        data[i] = p
+        data[i] = (255 - p[0], 255 - p[1], 255 - p[2])
 
 
 def seuil():
@@ -138,8 +167,8 @@ def bruit_L(valeur):
                 pxl.append(0)
             else:
                 pxl.append(j)
-        p = (pxl[0], pxl[1], pxl[2])
-        data[i] = p
+        data[i] = (pxl[0], pxl[1], pxl[2])
+
 
 
 def bruit_C(valeur):
@@ -161,8 +190,8 @@ def bruit_C(valeur):
                     pxl[k] = 0
                 else:
                     pxl[k] = j
-        p = (pxl[0], pxl[1], pxl[2])
-        data[i] = p
+        data[i] = (pxl[0], pxl[1], pxl[2])
+
 
 ##############
 ## Fenêtre  ##
@@ -179,6 +208,7 @@ fenetre.config(menu=menubar)
 # menu fichier :
 menufichier = Menu(menubar, tearoff=0)
 menufichier.add_command(label="Ouvrir une image", command=ouvrir_img)
+menufichier.add_command(label="Effacer", command=effacer)
 menubar.add_cascade(label="Fichier", menu=menufichier)
 
 # menu filtres :
@@ -186,8 +216,8 @@ menufiltres = Menu(menubar, tearoff=0)
 menufiltres.add_command(label="Noir & blanc", command=lambda: appliquer_filtre(noir_blanc))
 menufiltres.add_command(label="Negatif", command=lambda: appliquer_filtre(negatif))
 menufiltres.add_command(label="Seuil", command=lambda: appliquer_filtre(seuil))
-menufiltres.add_command(label="Bruit de chrominance", command=lambda: appliquer_filtre(bruit_C, 10))
-menufiltres.add_command(label="Bruit de luminance", command=lambda: appliquer_filtre(bruit_L, 10))
+menufiltres.add_command(label="Bruit de chrominance", command=lambda: defvaleur(bruit_C, 1))
+menufiltres.add_command(label="Bruit de luminance", command=lambda: defvaleur(bruit_L, 1))
 menubar.add_cascade(label="Filtres", menu=menufiltres)
 
 
