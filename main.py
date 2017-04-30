@@ -87,14 +87,15 @@ def retours(sens):
     # retourne sur l'image qu'on avait avant le premier retour)
     # À FAIRE (aussi) : trouver un moyen de supprimer toutes les images temporaires quand on a finit
     global img, data, no
-    if no+sens < no+5:
-        return
     no = no + sens
     if no < 0:
         return
-    img = Image.open("tmp_%ld.png" % no)
-    data = list(img.getdata())
-    afficher_img()
+    try:
+        img = Image.open("tmp_%ld.png" % no)
+        data = list(img.getdata())
+        afficher_img()
+    except:
+        no = no - sens
 
 
 def appliquer_filtre(filtre, *val):
