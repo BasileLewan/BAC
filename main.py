@@ -1,11 +1,13 @@
 from random import randint
 from tkinter import*
-from PIL import Image, ImageTk  # Attention : conflit de 'Image' dans Tkinter et pillow
 import tkinter.messagebox
 import tkinter.filedialog
-# import os
+from PIL import Image, ImageTk  # Attention : conflit de 'Image' dans Tkinter et pillow
+import os
 
 img = None
+no = -1
+
 
 ######################
 ## Autres fonctions ##
@@ -16,13 +18,13 @@ def ouvrir_img():
     """Choisir une image et céer sa liste de pixels"""
     global data, img
     # img = Image.open('gdtst.jpg')
-    img = Image.open('tst.png')
-    """filename = tkinter.filedialog.askopenfilename(title="Ouvrir une image",
+    # img = Image.open('tst.png')
+    filename = tkinter.filedialog.askopenfilename(title="Ouvrir une image",
                                                   filetypes=[('jpg files', '.jpg'),
                                                              ('bmp files', '.bmp'),
                                                              ('png files', '.png'),
                                                              ('all files', '.*')])  # ouverture de l'image
-    img = Image.open(filename)"""
+    img = Image.open(filename)
     data = list(img.getdata())
 
 
@@ -46,10 +48,11 @@ def ouvrir_img():
 
 def afficher_img():
     """aficher l'image dans la fenêtre"""
-    global Canevas, fenetre
-    img = ImageTk.PhotoImage(file='tmp.png')  # travaille avec différents types d'images
-    tmp_img = Image.open('tmp.png')
+    global Canevas, fenetre, no
+    img = ImageTk.PhotoImage(file="tmp_%ld.png" % no)  # travaille avec différents types d'images
+
     if img.height() > fenetre.winfo_screenheight() or img.width() > fenetre.winfo_screenwidth():
+        tmp_img = Image.open("tmp_%ld.png" % no)
         if img.width() > img.height():
             definition = (fenetre.winfo_screenwidth(), int(img.height() * (fenetre.winfo_screenwidth() / img.width())))
             img = ImageTk.PhotoImage(tmp_img.resize(definition))
@@ -66,9 +69,32 @@ def afficher_img():
 
 def enregistrer_img():
     """créer une image temporaire à partir des modifications"""
-    ## À FAIRE : retours en arrière/avant
+    global no
+    no += 1
     img.putdata(data)
-    img.save("tmp.png", "PNG")
+    img.save("tmp_%ld.png" % no, "PNG")
+    suppr = no - 5
+    if suppr < 0:
+        return
+    else:
+        os.remove("tmp_%ld.png" % suppr)
+
+
+def retours(sens):
+    """remplace l'image actuelle par une image temporaire précédente, permettant de revenir sur une modification"""
+    # À FAIRE : problème : quand on retourne plusieurs fois en arrière (ex:3)  qu'on modifie un nombre inférieur de
+    # fois (ex:1) et qu'on retourne en avant, on retombe sur les images d'avant le premier retour (ex: 5-3+2 = 5 => on
+    # retourne sur l'image qu'on avait avant le premier retour)
+    # À FAIRE (aussi) : trouver un moyen de supprimer toutes les images temporaires quand on a finit
+    global img, data, no
+    if no+sens < no+5:
+        return
+    no = no + sens
+    if no < 0:
+        return
+    img = Image.open("tmp_%ld.png" % no)
+    data = list(img.getdata())
+    afficher_img()
 
 
 def appliquer_filtre(filtre, *val):
@@ -77,7 +103,7 @@ def appliquer_filtre(filtre, *val):
         return
     effacer()
     # chargement(début)
-    print('val = ', val)
+    # print('val = ', val)
     filtre(*val)
     enregistrer_img()
     # chargement(fin)
@@ -128,7 +154,7 @@ def effacer():
 
 def noir_blanc():
     global data
-    print('les crêpes')
+    # print('les crêpes')
     for i in range(len(data)):
         p = data[i]
         r = int((p[0] + p[1] + p[2]) / 3)
@@ -220,6 +246,11 @@ menufiltres.add_command(label="Bruit de chrominance", command=lambda: defvaleur(
 menufiltres.add_command(label="Bruit de luminance", command=lambda: defvaleur(bruit_L, 1))
 menubar.add_cascade(label="Filtres", menu=menufiltres)
 
+# menu Édition :
+menuedition = Menu(menubar, tearoff=0)
+menuedition.add_command(label="Retour arrière", command=lambda: retours(-1))
+menuedition.add_command(label="Refaire", command=lambda: retours(1))
+menubar.add_cascade(label="Édition", menu=menuedition)
 
 fenetre.mainloop()
 
