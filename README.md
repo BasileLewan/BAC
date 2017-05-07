@@ -2,6 +2,7 @@
 Attention, faut se dépécher
 
 https://docs.google.com/document/d/1qTo5VOXM7wS6DTdNOHq2SunFrHi7EiNMmVxx8VWmVcw/edit?usp=sharing
+https://docs.google.com/document/d/15qw2y_ATLwemJ2sYfMIzG4nDzK-SCjowDU8z7KTgt3E/edit
 
 # À faire
 
