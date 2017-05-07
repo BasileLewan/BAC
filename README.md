@@ -7,13 +7,13 @@ https://docs.google.com/document/d/15qw2y_ATLwemJ2sYfMIzG4nDzK-SCjowDU8z7KTgt3E/
 # À faire
 
 features :
- - [ ] retour arrière
- - [ ] clear
- - [ ] préreglages
- - [ ] enregistrer
+ - [x] ~~retour arrière~~
+ - [x] ~~clear~~
+ - [x] ~~préreglages~~
+ - [x] ~~enregistrer~~
  - [ ] importer depuis internet
  - [ ] partage
- - [ ] different  formats
+ - [x] ~~different  formats~~
  
  filtres qu'on pourrait faire :
  - [x] ~~seuil~~
