@@ -4,9 +4,7 @@ import tkinter.messagebox
 import tkinter.filedialog
 from PIL import Image, ImageTk  # Attention : conflit de 'Image' dans Tkinter et pillow
 import os
-
-img = None
-no = -1
+import shutil
 
 
 ######################
@@ -24,6 +22,12 @@ def ouvrir_img():
                                                              ('bmp files', '.bmp'),
                                                              ('png files', '.png'),
                                                              ('all files', '.*')])  # ouverture de l'image
+
+    # Évite une erreur si l'utilisateur ne spécifie pas d'image
+    if filename:
+        pass
+    else:
+        return
     img = Image.open(filename)
     data = list(img.getdata())
 
@@ -51,6 +55,7 @@ def afficher_img():
     global Canevas, fenetre, no
     img = ImageTk.PhotoImage(file="tmp_%ld.png" % no)  # travaille avec différents types d'images
 
+    # réduit l'image affichée à la taille de l'écran si elle est plus grande
     if img.height() > fenetre.winfo_screenheight() or img.width() > fenetre.winfo_screenwidth():
         tmp_img = Image.open("tmp_%ld.png" % no)
         if img.width() > img.height():
@@ -61,6 +66,7 @@ def afficher_img():
             img = ImageTk.PhotoImage(tmp_img.resize(definition))
     else:
         pass
+    effacer()
     Canevas.config(height=img.height(), width=img.width())  # taille du canvas par rapport à la taille de l'image
     Canevas.create_image(0, 0, anchor=NW, image=img)
     Canevas.pack()
@@ -68,11 +74,12 @@ def afficher_img():
 
 
 def enregistrer_img():
-    """créer une image temporaire à partir des modifications"""
+    """crée une nouvelle image temporaire à partir des modifications"""
     global no
     no += 1
     img.putdata(data)
     img.save("tmp_%ld.png" % no, "PNG")
+    # On ne conserve que les 5 dernières images temporaires :
     suppr = no - 5
     if suppr < 0:
         return
@@ -98,6 +105,42 @@ def retours(sens):
         no = no - sens
 
 
+def exporter():
+    """permet à l'utilisateur de sauvegarder l'image sous la forme qui lui convient"""
+    global emplacement, img, type
+    emplacement = tkinter.filedialog.asksaveasfilename(title="Enregistrer sous...",
+                                                       filetypes=[('jpg files', '.jpg'),
+                                                                  ('bmp files', '.bmp'),
+                                                                  ('png files', '.png')],
+                                                       defaultextension='png')
+    # bug (qui vient de tkinter) : si l'utilisateur selectionne un format (ex:jpg) et écrase une image d'un autre format
+    # (ex:png) alors l'extension est celle du fichier écrasé (ex:png)
+
+    # Évite une erreur si l'utilisateur ne spécifie pas de fichier
+    if emplacement:
+        pass
+    else:
+        return
+
+    if img is None:
+        return
+    type = emplacement[-3] + emplacement[-2] + emplacement[-1]
+    img.save(emplacement, type)
+
+
+def sauve():
+    """ Enregistre l'image à l'emplacement précédent"""
+    global emplacement, type
+    # renvoie à la définition d'un emplacement de sauvegarde si le précedent n'existe pas
+    if emplacement:
+        pass
+    else:
+        exporter()
+        return
+    img.save(emplacement, type)
+
+
+
 def appliquer_filtre(filtre, *val):
     """applique le filrte spécifié puis enregistre et affiche l'image"""
     if img is None:
@@ -106,13 +149,16 @@ def appliquer_filtre(filtre, *val):
     # chargement(début)
     # print('val = ', val)
     filtre(*val)
-    enregistrer_img()
+    enregistrer_img()  # On crée une nouvelle image temporaire pour chaque filtre appliqué
+    tmp = str(filtre.__name__) + '({})'.format(str(*val))
+    with open('tmp_preset.py', 'a') as f:
+        f.write("   {}\n".format(tmp))
     # chargement(fin)
     afficher_img()
 
 
 def defvaleur(filtre, val):
-    """demande à l'utilisateur de spécifier une valeur pour un filtre"""
+    """demande à l'utilisateur de spécifier une valeur pour les filtres qui le nécessite"""
     curseur = Tk()
     curseur.title("definition d'une valeur")
 
@@ -125,6 +171,7 @@ def defvaleur(filtre, val):
         global tmp_val
         tmp_val = int(val)
 
+    # 'val' permet de savoir quelle est l'échelle du curseur
     if val == 1:
         defval = (0, 100)
     elif val == 0:
@@ -141,6 +188,39 @@ def chargement(arg):
     """affiche un écran de chargement pendant que le filtre se met en place"""
     ## À FAIRE : faire
     pass
+
+
+def preset():
+    """Execute un fichier de préreglages"""
+    filename = tkinter.filedialog.askopenfilename(title="Ouvrir un fichier de préreglages",
+                                                  filetypes=[('fichier presets', '.py'),
+                                                             ('all files', '.*')])
+    # Évite une erreur si l'utilisateur ne spécifie pas de fichier
+    if filename:
+        pass
+    else:
+        return
+    shutil.copyfile(filename, "tempreset.py")
+    from tempreset import liste
+    # chrg
+    liste()
+    enregistrer_img()
+    # chrg
+    afficher_img()
+
+
+def export_preset():
+    """Permet d'exporter la suite de filtres appliqués comme un fichier de preset"""
+    place = tkinter.filedialog.asksaveasfilename(title="Enregistrer sous...",
+                                                       filetypes=[('Python', '.py')],
+                                                       defaultextension='py')
+
+    # Évite une erreur si l'utilisateur ne spécifie pas de fichier
+    if place:
+        pass
+    else:
+        return
+    shutil.copyfile('preset.py', place)
 
 
 def effacer():
@@ -197,7 +277,6 @@ def bruit_L(valeur):
         data[i] = (pxl[0], pxl[1], pxl[2])
 
 
-
 def bruit_C(valeur):
     global data
     for i in range(len(data)):
@@ -220,6 +299,17 @@ def bruit_C(valeur):
         data[i] = (pxl[0], pxl[1], pxl[2])
 
 
+#####################
+## Initialisation  ##
+#####################
+
+img = None
+no = -1  # correspond au numéro qui sera affecté à chaque image temporaire
+with open('preset.py', 'w') as f:
+    f.write('from main import noir_blanc, negatif, seuil, bruit_L, bruit_C\n')
+    f.write('def liste():\n')
+
+
 ##############
 ## Fenêtre  ##
 ##############
@@ -235,6 +325,8 @@ fenetre.config(menu=menubar)
 # menu fichier :
 menufichier = Menu(menubar, tearoff=0)
 menufichier.add_command(label="Ouvrir une image", command=ouvrir_img)
+menufichier.add_command(label="Enregistrer sous", command=exporter)
+menufichier.add_command(label="Enregistrer", command=sauve)
 menufichier.add_command(label="Effacer", command=effacer)
 menubar.add_cascade(label="Fichier", menu=menufichier)
 
@@ -251,6 +343,8 @@ menubar.add_cascade(label="Filtres", menu=menufiltres)
 menuedition = Menu(menubar, tearoff=0)
 menuedition.add_command(label="Retour arrière", command=lambda: retours(-1))
 menuedition.add_command(label="Refaire", command=lambda: retours(1))
+menuedition.add_command(label="Importer des préreglages", command=preset)
+menuedition.add_command(label="Exporter les préreglages", command=export_preset)
 menubar.add_cascade(label="Édition", menu=menuedition)
 
 fenetre.mainloop()
