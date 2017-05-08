@@ -13,34 +13,38 @@ from PIL import Image, ImageTk  # Attention : conflit de 'Image' dans Tkinter et
 import os
 import shutil
 
-global vartest, effets, eff, bruit, val_bruit, fenetre, taille, trace_m, max_E, effets_Back, no
+global vartest, effets, eff, bruit, val_bruit, fenetre, taille, trace_m, max_E, effets_Back, no # À quoi ça sert ?
 
-######################
-## Autres fonctions ##
-######################
+####################
+# Autres fonctions #
+####################
 
 
 def afficher_img():
     """aficher l'image dans la fenêtre"""
 
-    global Canevas, fenetre, no, s1,s2,trace_m       
+    global Canevas, fenetre, no, s1, s2, trace_m
     img = ImageTk.PhotoImage(file="tmp_%ld.png" % no)  # travaille avec différents types d'images
                            
     # redimensionne l'image affichée selon la taille de l'écran si elle est plus grande           
-    if(trace_m==1):print("img width", img.width())  ### trace
-    if(trace_m==1):print("img height", img.height()) ### trace
-    ecran_W= fenetre.winfo_screenwidth() 
-    ecran_H= fenetre.winfo_screenheight()
-    if(trace_m==1):print("Ecran W:", ecran_W,", Ecran H:", ecran_H)
+    if trace_m == 1:
+        print("img width", img.width())  # trace
+    if trace_m == 1:
+        print("img height", img.height())  # trace
+    ecran_W = fenetre.winfo_screenwidth()
+    ecran_H = fenetre.winfo_screenheight()
+    if trace_m == 1:
+        print("Ecran W:", ecran_W, ", Ecran H:", ecran_H)
     
     if (img.height()+250) > ecran_W or (img.width()+250) > ecran_H:         
         tmp_img = Image.open("tmp_%ld.png" % no)               
         if img.width() > img.height():
             definition = (ecran_W-250, int(img.height() * (ecran_W-250) / img.width()))
-            if(trace_m==1):print("def:",definition)   ### trace
-
+            if trace_m == 1:
+                print("def:", definition)   # trace
             img = ImageTk.PhotoImage(tmp_img.resize(definition))
-            if(trace_m==1):print("redim w>H") ### trace
+            if trace_m == 1:
+                print("redim w>H")  # trace
         
         else:
             definition = (int(img.width() * (ecran_H-250) / img.height()), ecran_H-250)
@@ -49,71 +53,80 @@ def afficher_img():
         pass    
     effacer()
     
-    h1= img.height()
-    h=min(h1,ecran_H-250)
-    w1=img.width()             
-    w=min(w1,ecran_W-250)
+    h1 = img.height()
+    h = min(h1, ecran_H-250)
+    w1 = img.width()
+    w = min(w1, ecran_W-250)
 
-    taille_ecran= str(w+80)+"x"+str(h+80)+ "+10+10"  
-    fenetre.geometry(taille_ecran) # modifie la géométrie de la fenêtre
+    taille_ecran = str(w+80)+"x"+str(h+80) + "+10+10"  
+    fenetre.geometry(taille_ecran)  # modifie la géométrie de la fenêtre
     fenetre.update()
-    if(trace_m==1):print("geométrie fenêtre:" ,fenetre.geometry()) ## trace  
+    if trace_m == 1:
+        print("geométrie fenêtre:", fenetre.geometry())  # trace
         
     # règle le scrolll       
-    if (h+w) <(h1+w1):  # si taille  finale < taille photo   
-       # Règle la taille du canvas par rapport à la taille de l'image 
-       Canevas.config(scrollregion=(0,0,w1,h1),height=h,width=w)            
+    if (h+w) < (h1+w1):  # si taille  finale < taille photo
+        # Règle la taille du canvas par rapport à la taille de l'image
+        Canevas.config(scrollregion=(0, 0, w1, h1), height=h, width=w)
     else:
-        Canevas.config(scrollregion=(0,0,w1,h1),height=h,width=w)                   
+        Canevas.config(scrollregion=(0, 0, w1, h1), height=h, width=w)
     Canevas.pack(side=LEFT)
  
-    Canevas.create_image(0,0,anchor=NW,image=img) 
-    Texte2.set('' ) # affichage dans le label 
+    Canevas.create_image(0, 0, anchor=NW, image=img)
+    Texte2.set('')  # affichage dans le label
  
     fenetre.mainloop()
 
 
-def aff_effet(vartest,eff,sens_op):
+def aff_effet(vartest, eff, sens_op):
     """permet de gérer l'affichage des effets"""     
-    global effets,trace_m, max_E, effets_Back
-    if(trace_m==1):print("aff_effet, effet:",eff) ## trace
-    if(trace_m==2):print("aff_effet, vartest:",vartest)  ## trace 
-    if(trace_m==2):print("aff_effet,len(effets):",len(effets))  ## trace   
+    global effets, trace_m, max_E, effets_Back
+    if trace_m == 1:
+        print("aff_effet, effet:", eff)  # trace
+    if trace_m == 2:
+        print("aff_effet, vartest:", vartest)  # trace
+        print("aff_effet,len(effets):", len(effets))  # trace
     
-    if vartest>=0:
-        if vartest> len(effets):           
+    if vartest >= 0:
+        if vartest > len(effets):
             effets.append(eff)
-            if(trace_m==2):print("aff_eff, sens_op", sens_op) ## trace
-            if sens_op==1:
-                temp=len(effets)
-                if(trace_m==2):print("aff_eff avec sens_op==1, temp:", temp) ## trace
+            if sens_op == 1:
+                temp = len(effets)
+                if trace_m == 2:
+                    print("aff_eff avec sens_op==1, temp:", temp)  # trace
                 effets_Back.append(eff)
-            if(trace_m==2):print("aff_eff, effets", effets) ## trace
-            if(trace_m==2):print("aff_eff, effets_Back", effets_Back) ## trace
+            if trace_m == 2:
+                print("aff_eff, effets", effets)  # trace
+                print("aff_eff, effets_Back", effets_Back)  # trace
+                print("aff_eff, sens_op", sens_op)  # trace
             
-            if sens_op==4: #  refaire demandé
-                temp=len(effets)
-                if(trace_m==2):print("aff_eff avec sens_op==1, temp:", temp) ## trace               
-                effets[vartest-1]=effets_Back[vartest-1]  # mettre -1 à cause e l'indice                 
-                if(trace_m==2):print("aff_eff, effets avec sens op==4", effets) ## trace
-                if(trace_m==2):print("aff_eff, effets_Back avec sens op==4", effets_Back) ## trace  
-           
+            if sens_op == 4:  # refaire demandé
+                temp = len(effets)
+                if trace_m == 2:
+                    print("aff_eff avec sens_op==1, temp:", temp)  # trace
+                effets[vartest-1] = effets_Back[vartest-1]  # mettre -1 à cause e l'indice
+                if trace_m == 2:
+                    print("aff_eff, effets avec sens op==4", effets)  # trace
+                    print("aff_eff, effets_Back avec sens op==4", effets_Back)  # trace
         else:
-            temp=len(effets)
-            if(trace_m==2):print("aff_eff apres else avant modif liste, temp:", temp) ## trace 
-            effets [temp-1:]=[]
-            temp=len(effets)
-            if(trace_m==2):print("aff_eff apres else, temp apres modif liste:", temp) ## trace 
-            if(trace_m==2):print("aff_eff apres else, effets:", effets) ## trace                    
-        mess= str(effets)        
-        if(trace_m==1):print("aff_effet, mess:",mess)  ## trace
+            temp = len(effets)
+            if trace_m == 2:
+                print("aff_eff apres else avant modif liste, temp:", temp)  # trace
+            effets[temp-1:] = []
+            temp = len(effets)
+            if trace_m == 2:
+                print("aff_eff apres else, temp apres modif liste:", temp)  # trace
+                print("aff_eff apres else, effets:", effets)  # trace
+        mess = str(effets)
+        if trace_m == 1:
+            print("aff_effet, mess:", mess)  # trace
         trace_effet(mess)  # permet de visualiser les effets mis en place 
         
 
 def appliquer_filtre(filtre, *val):
     """applique le filtre spécifié puis enregistre et affiche l'image"""
-    global eff, vartest,val_bruit, trace_m, max_E
-    if val_bruit==0:
+    global eff, vartest, val_bruit, trace_m, max_E
+    if val_bruit == 0:
         if img is None:
             return
         effacer()
@@ -122,12 +135,15 @@ def appliquer_filtre(filtre, *val):
         chargement2()
         filtre(*val)
         
-        if(trace_m==1):print("effet:",eff) ## trace
-        vartest=vartest+1
-        if(trace_m==1):print("appliquer_filtre, vartest:",vartest) ## trace
-        max_E=max_E+1
-        if(trace_m==2):print("appliquer_filtre, max_E:",max_E) ## trace        
-        aff_effet(vartest,eff,1)
+        if trace_m == 1:
+            print("effet:", eff)  # trace
+        vartest = vartest+1
+        if trace_m == 1:
+            print("appliquer_filtre, vartest:", vartest)  # trace
+        max_E = max_E+1
+        if trace_m == 2:
+            print("appliquer_filtre, max_E:", max_E)  # trace
+        aff_effet(vartest, eff, 1)
         
         enregistrer_img()  # On crée une nouvelle image temporaire pour chaque filtre appliqué
         tmp = str(filtre.__name__) + '({})'.format(str(*val))
@@ -140,7 +156,7 @@ def appliquer_filtre(filtre, *val):
 
 def aPropos():
     """permet de montrer les créateurs du programme"""   
-    tkinter.messagebox.showinfo("A propos"," ce programme a été créé par Théo et Basile, 2017")
+    tkinter.messagebox.showinfo("A propos", " ce programme a été créé par Théo et Basile, 2017")
     
     
 def chargement(arg):
@@ -153,33 +169,33 @@ def chargement2():
     """affiche un message pendant que le filtre se met en place"""
     global taille, fenetre
     if taille < 2000:
-        Texte2.set('Patience....' ) # affichage dans le label 
+        Texte2.set('Patience....')  # affichage dans le label
     else:
-        Texte2.set('Patience le fichier est gros....' ) # affichage dans le label                    
+        Texte2.set('Patience le fichier est gros....')  # affichage dans le label
     fenetre.update_idletasks()  # mise à jour de l'affichage 
 
 
 def defvaleur(filtre, val):
     """demande à l'utilisateur de spécifier une valeur pour les filtres qui le nécessite"""
-    global val_bruit,trace_m
-    val_bruit=val_bruit+1
-    if(trace_m==1):print("val-bruit:", val_bruit) ## trace
+    global val_bruit, trace_m
+    val_bruit = val_bruit+1
+    if trace_m == 1:
+        print("val-bruit:", val_bruit)  # trace
     if val_bruit == 1:
         curseur = Tk()
         curseur.title("choix d'une valeur")
     
         def sortie():
-            global val_bruit,tmp_val,trace_m
+            global val_bruit, tmp_val, trace_m
             curseur.destroy()
-            val_bruit=0
-            if(trace_m==1):print("val_bruit apres corr:",val_bruit ) ## trace
+            val_bruit = 0
+            if trace_m == 1:
+                print("val_bruit apres corr:", val_bruit)  # trace
             appliquer_filtre(filtre, tmp_val)
-    
     
         def tmp(val):
             global tmp_val
             tmp_val = int(val)
- 
     
         # 'val' permet de savoir quelle est l'échelle du curseur
         if val == 1:
@@ -210,11 +226,11 @@ def effacer_2():
     Texte.set("")  # vide le label 
     fenetre.update_idletasks()  # mise à jour de l'affichage 
    
-    vartest=0
-    effets=[]
-    effets_back=[]
-    max_E=0 
-    no=-1
+    vartest = 0
+    effets = []
+    effets_back = []  # À quoi ça sert ?
+    max_E = 0
+    no = -1
     Texte.set("")         
                          
 
@@ -269,21 +285,21 @@ def exporter():
     img.save(emplacement, type)
 
 
-def exporter2():
+def exporter2():  # c'est quoi la différence par rapport à l'autre Exporter() ?
     """créer une image temporaire à partir des modifications"""
-    global vartest,Canevas,img, data
-    if vartest>=0:      
+    global vartest, Canevas, img, data
+    if vartest >= 0:
         img.putdata(data)	
-        choixF = tkinter.filedialog.asksaveasfilename(title="Enregister cette image",\
-        filetypes=[('PNG files','.png')],defaultextension = '.jpg')
+        choixF = tkinter.filedialog.asksaveasfilename(title="Enregister cette image",
+                                                      filetypes=[('PNG files', '.png')], defaultextension='.jpg')
         if choixF:
             img.save(choixF, "PNG")       
 
 
 def ouvrir_img():
     """Choisir une image et céer sa liste de pixels"""
-    global data, img,filename, vartest, taille, trace_m, effets,effets_Back, max_E, no
-    #global data, img,filename, vartest,s1,s2, scroll_E
+    global data, img, filename, vartest, taille, trace_m, effets, effets_Back, max_E, no
+    # global data, img,filename, vartest,s1,s2, scroll_E
 
     filename = tkinter.filedialog.askopenfilename(title="Ouvrir une image",
                                                   filetypes=[('jpg files', '.jpg'),
@@ -297,31 +313,33 @@ def ouvrir_img():
     else:
         return
         
-    vartest=0
-    effets=[]
-    effets_back=[]
-    max_E=0 
-    no=-1
+    vartest = 0
+    effets = []
+    effets_back = []
+    max_E = 0
+    no = -1
     Texte.set("")
     
     img = Image.open(filename)
     
-    mess= "Format:" + str(img.format) + ",taille:"+str(img.size) +",mode:"  +str(img.mode)
-    if(trace_m==1): print(img.format, img.size, img.mode)  #  info sur img   ## trace
+    mess = "Format:" + str(img.format) + ",taille:"+str(img.size) + ",mode:" + str(img.mode)
+    if trace_m == 1:
+        print(img.format, img.size, img.mode)  # info sur img   ## trace
     Texte3.set(mess)  # affichage dans le label      
     fenetre.update_idletasks()  # mise à jour de l'affichage 
  
-    statinfo= os.stat(filename)    # récupère taille du fichier
-    taille =round(statinfo.st_size/1024)  # conversion en Ko
-    descr= str(taille) + " ko"    # prépare le message à afficher
-    mess2= mess+ ", Taille photo : "+descr
+    statinfo = os.stat(filename)    # récupère taille du fichier
+    taille = round(statinfo.st_size/1024)  # conversion en Ko
+    descr = str(taille) + " ko"    # prépare le message à afficher
+    mess2 = mess + ", Taille photo : "+descr
     Texte3.set(mess2)  # affichage dans le label
     if taille < 2000:
-        Texte2.set('Patience....' ) # affichage dans le label 
+        Texte2.set('Patience....')  # affichage dans le label
     else:
-        Texte2.set('Patience le fichier est gros....' ) # affichage dans le label                       
+        Texte2.set('Patience le fichier est gros....')  # affichage dans le label
     
-    if(trace_m==1):print("ouvrir img, vartest:", vartest)  ## trace  
+    if trace_m == 1:
+        print("ouvrir img, vartest:", vartest)  # trace
     fenetre.update_idletasks()  # mise à jour de l'affichage 
                                                    
     data = list(img.getdata())
@@ -354,24 +372,26 @@ def retours(sens):
     # fois (ex:1) et qu'on retourne en avant, on retombe sur les images d'avant le premier retour (ex: 5-3+2 = 5 => on
     # retourne sur l'image qu'on avait avant le premier retour)
     # À FAIRE (aussi) : trouver un moyen de supprimer toutes les images temporaires quand on a finit
-    global img, data, no, vartest,trace_m, max_E
-    if(trace_m==2):print("retours, vartest avant modif:", vartest) ## trace   
-    if(trace_m==2):print("retours, max_E:", max_E) ## trace
-    if(trace_m==2):print("retours, no avant modif:", no) ## trace
+    global img, data, no, vartest, trace_m, max_E
+    if trace_m == 2:
+        print("retours, vartest avant modif:", vartest)  # trace
+        print("retours, max_E:", max_E)  # trace
+        print("retours, no avant modif:", no)  # trace
         
-    possible=1
-    if sens>0:
-        if vartest==max_E:
-            possible=0
+    possible = 1
+    if sens > 0:
+        if vartest == max_E:
+            possible = 0
   
-    if sens<0:
-        if vartest==0:
-            possible=0
+    if sens < 0:
+        if vartest == 0:
+            possible = 0
     
-    if possible==1:
+    if possible == 1:
             
         no = no + sens
-        if(trace_m==2):print("retours, no après modif:", no)  ## trace 
+        if trace_m == 2:
+            print("retours, no après modif:", no)  # trace
         if no < 0:
             return
         try:
@@ -379,18 +399,19 @@ def retours(sens):
         except:
             no = no - sens
             
-        if(trace_m==2):print("retours, sens:", sens) ## trace
-        vartest= vartest + sens  ##
-        if(trace_m==2):print("retours, vartest après modif:", vartest)  ## trace 
-        if sens<0:
-            aff_effet(vartest,"",3) ## retour arr
+        if trace_m == 2:
+            print("retours, sens:", sens)  # trace
+        vartest = vartest + sens
+        if trace_m == 2:
+            print("retours, vartest après modif:", vartest)  # trace
+        if sens < 0:
+            aff_effet(vartest, "", 3)  # retour arr
         else:
-             aff_effet(vartest,"",4) ## refaire 
+            aff_effet(vartest, "", 4)  # refaire
                  
         chargement2()
         data = list(img.getdata())
         afficher_img()         
-
 
 
 def sauve():
@@ -410,13 +431,13 @@ def trace_effet(effets):
     Texte.set('effets réalisés -> ' + effets)
     
 
-###############
-##  Filtres  ##
-###############
+#############
+#  Filtres  #
+#############
 
 
 def bruit_C(valeur):
-    global data,eff,tmp_val    
+    global data, eff, tmp_val
     for i in range(len(data)):
         p = data[i]
         r = randint(0, 2)
@@ -435,12 +456,12 @@ def bruit_C(valeur):
                 else:
                     pxl[k] = j
         data[i] = (pxl[0], pxl[1], pxl[2])
-    eff="BC"+str(valeur)
-    tmp_val=0
+    eff = "BC"+str(valeur)
+    tmp_val = 0
     
  
 def bruit_L(valeur):
-    global data,eff,tmp_val
+    global data, eff, tmp_val
     for i in range(len(data)):
         p = data[i]
         r = randint(-1, 1) * 255
@@ -454,16 +475,16 @@ def bruit_L(valeur):
             else:
                 pxl.append(j)
         data[i] = (pxl[0], pxl[1], pxl[2])
-    eff="BL"+ str(valeur)
-    tmp_val=0
+    eff = "BL" + str(valeur)
+    tmp_val = 0
 
   
 def negatif():
-    global data,eff
+    global data, eff
     for i in range(len(data)):
         p = data[i]
         data[i] = (255 - p[0], 255 - p[1], 255 - p[2])
-    eff="Negat"
+    eff = "Negat"
 
     
 def noir_blanc():
@@ -472,11 +493,11 @@ def noir_blanc():
         p = data[i]
         r = int((p[0] + p[1] + p[2]) / 3)
         data[i] = (r, r, r)
-    eff="Noir_B"
+    eff = "Noir_B"
 
 
 def seuil():
-    global data,eff
+    global data, eff
     for i in range(len(data)):
         p = data[i]
         r = int((p[0] + p[1] + p[2]) / 3)
@@ -484,12 +505,13 @@ def seuil():
             data[i] = (0, 0, 0)
         else:
             data[i] = (255, 255, 255)
-    eff="Seuil"
+    eff = "Seuil"
 
 
-#####################
-## Initialisation  ##
-#####################
+###################
+# Initialisation  #
+###################
+
 effets=[]  # pour tracer la suite des filtres appliqués à afficher
 effets_Back=[] # pour tracer la suite des filtres appliqués
 
@@ -515,7 +537,7 @@ fenetre.title("modif photos")    # Titre de la fenetre
          
 Canevas = Canvas(fenetre) 
 
-## création du menu :
+# création du menu :
 menubar = Menu(fenetre)
 fenetre.config(menu=menubar)
 
@@ -528,7 +550,7 @@ menufichier.add_command(label="Enregistrer", command=sauve)
 menufichier.add_separator()
 menufichier.add_command(label="Effacer", command=effacer_2)
 menufichier.add_separator()
-menufichier.add_command(label="Quitter",command=fenetre.destroy)
+menufichier.add_command(label="Quitter", command=fenetre.destroy)
 menubar.add_cascade(label="Fichier", menu=menufichier)
 
 # menu filtres :
@@ -548,35 +570,33 @@ menuedition.add_command(label="Importer des préreglages", command=preset)
 menuedition.add_command(label="Exporter les préreglages", command=export_preset)
 menubar.add_cascade(label="Édition", menu=menuedition)
 
-menuDivers = Menu(menubar,tearoff=0)
-menuDivers.add_command(label="A propos",command=aPropos)
+menuDivers = Menu(menubar, tearoff=0)
+menuDivers.add_command(label="A propos", command=aPropos)
 menubar.add_cascade(label="Divers", menu=menuDivers)
 
 Texte3 = StringVar()
 # LabelRes3 = Label(Mafenetre, textvariable = Texte3, fg ='blue', bg= 'white')
-LabelRes3 = Label(fenetre, textvariable = Texte3, fg ='blue',font=("Helvetica", 10))
-LabelRes3.pack(side = TOP, padx = 1, pady = 1)
+LabelRes3 = Label(fenetre, textvariable=Texte3, fg='blue', font=("Helvetica", 10))
+LabelRes3.pack(side=TOP, padx=1, pady=1)
 Texte2 = StringVar()
-LabelRes2 = Label(fenetre, textvariable = Texte2, fg ='red',font=("Helvetica", 10))
-LabelRes2.pack(side = TOP, padx = 1, pady = 1)
+LabelRes2 = Label(fenetre, textvariable=Texte2, fg='red', font=("Helvetica", 10))
+LabelRes2.pack(side=TOP, padx=1, pady=1)
 
 Texte = StringVar()
-LabelResultat = Label(fenetre, textvariable = Texte, fg ='green',font=("Helvetica", 10))
-LabelResultat.pack(side = TOP, padx = 1, pady = 1)
+LabelResultat = Label(fenetre, textvariable=Texte, fg='green', font=("Helvetica", 10))
+LabelResultat.pack(side=TOP, padx=1, pady=1)
 
 
 fenetre.geometry('600x300+20+10')  # 600 p large par 300 H  positionnée en (20, 10) sur l'écran.      #  
 
-Canevas.config(scrollregion=(0,0,600,300),width=600,height=300)      
+Canevas.config(scrollregion=(0, 0, 600, 300), width=600, height=300)
 # scroll vertical
 s1 = Scrollbar(fenetre, command=Canevas.yview)
 s1.pack(side=RIGHT, fill=Y)
 Canevas.configure(yscrollcommand=s1.set)
 # scroll horizontal
-s2 = Scrollbar(fenetre,orient=HORIZONTAL, command=Canevas.xview)
+s2 = Scrollbar(fenetre, orient=HORIZONTAL, command=Canevas.xview)
 s2.pack(side=BOTTOM, fill=X)  
 Canevas.configure(xscrollcommand=s2.set)
 
 fenetre.mainloop()
-
-
