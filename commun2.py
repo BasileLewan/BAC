@@ -27,25 +27,15 @@ def afficher_img():
     img = ImageTk.PhotoImage(file="tmp_%ld.png" % no)  # travaille avec différents types d'images
                            
     # redimensionne l'image affichée selon la taille de l'écran si elle est plus grande           
-    if trace_m == 1:
-        print("img width", img.width())  # trace
-    if trace_m == 1:
-        print("img height", img.height())  # trace
     ecran_W = fenetre.winfo_screenwidth()
     ecran_H = fenetre.winfo_screenheight()
-    if trace_m == 1:
-        print("Ecran W:", ecran_W, ", Ecran H:", ecran_H)
-    
+       
     if (img.height()+250) > ecran_W or (img.width()+250) > ecran_H:         
         tmp_img = Image.open("tmp_%ld.png" % no)               
         if img.width() > img.height():
             definition = (ecran_W-250, int(img.height() * (ecran_W-250) / img.width()))
-            if trace_m == 1:
-                print("def:", definition)   # trace
             img = ImageTk.PhotoImage(tmp_img.resize(definition))
-            if trace_m == 1:
-                print("redim w>H")  # trace
-        
+                 
         else:
             definition = (int(img.width() * (ecran_H-250) / img.height()), ecran_H-250)
             img = ImageTk.PhotoImage(tmp_img.resize(definition))      
@@ -61,9 +51,7 @@ def afficher_img():
     taille_ecran = str(w+80)+"x"+str(h+80) + "+10+10"  
     fenetre.geometry(taille_ecran)  # modifie la géométrie de la fenêtre
     fenetre.update()
-    if trace_m == 1:
-        print("geométrie fenêtre:", fenetre.geometry())  # trace
-        
+            
     # règle le scrolll       
     if (h+w) < (h1+w1):  # si taille  finale < taille photo
         # Règle la taille du canvas par rapport à la taille de l'image
@@ -81,45 +69,27 @@ def afficher_img():
 def aff_effet(vartest, eff, sens_op):
     """permet de gérer l'affichage des effets"""     
     global effets, trace_m, max_E, effets_Back
-    if trace_m == 1:
-        print("aff_effet, effet:", eff)  # trace
-    if trace_m == 2:
-        print("aff_effet, vartest:", vartest)  # trace
-        print("aff_effet,len(effets):", len(effets))  # trace
-    
+        
     if vartest >= 0:
         if vartest > len(effets):
             effets.append(eff)
             if sens_op == 1:
                 temp = len(effets)
-                if trace_m == 2:
-                    print("aff_eff avec sens_op==1, temp:", temp)  # trace
                 effets_Back.append(eff)
-            if trace_m == 2:
-                print("aff_eff, effets", effets)  # trace
-                print("aff_eff, effets_Back", effets_Back)  # trace
-                print("aff_eff, sens_op", sens_op)  # trace
-            
+           
             if sens_op == 4:  # refaire demandé
                 temp = len(effets)
-                if trace_m == 2:
-                    print("aff_eff avec sens_op==1, temp:", temp)  # trace
+                
                 effets[vartest-1] = effets_Back[vartest-1]  # mettre -1 à cause e l'indice
-                if trace_m == 2:
-                    print("aff_eff, effets avec sens op==4", effets)  # trace
-                    print("aff_eff, effets_Back avec sens op==4", effets_Back)  # trace
+                
         else:
             temp = len(effets)
-            if trace_m == 2:
-                print("aff_eff apres else avant modif liste, temp:", temp)  # trace
+            
             effets[temp-1:] = []
             temp = len(effets)
-            if trace_m == 2:
-                print("aff_eff apres else, temp apres modif liste:", temp)  # trace
-                print("aff_eff apres else, effets:", effets)  # trace
+            
         mess = str(effets)
-        if trace_m == 1:
-            print("aff_effet, mess:", mess)  # trace
+        
         trace_effet(mess)  # permet de visualiser les effets mis en place 
         
 
@@ -135,14 +105,11 @@ def appliquer_filtre(filtre, *val):
         chargement2()
         filtre(*val)
         
-        if trace_m == 1:
-            print("effet:", eff)  # trace
+        
         vartest = vartest+1
-        if trace_m == 1:
-            print("appliquer_filtre, vartest:", vartest)  # trace
+        
         max_E = max_E+1
-        if trace_m == 2:
-            print("appliquer_filtre, max_E:", max_E)  # trace
+        
         aff_effet(vartest, eff, 1)
         
         enregistrer_img()  # On crée une nouvelle image temporaire pour chaque filtre appliqué
@@ -179,8 +146,7 @@ def defvaleur(filtre, val):
     """demande à l'utilisateur de spécifier une valeur pour les filtres qui le nécessite"""
     global val_bruit, trace_m
     val_bruit = val_bruit+1
-    if trace_m == 1:
-        print("val-bruit:", val_bruit)  # trace
+    
     if val_bruit == 1:
         curseur = Tk()
         curseur.title("choix d'une valeur")
@@ -189,8 +155,7 @@ def defvaleur(filtre, val):
             global val_bruit, tmp_val, trace_m
             curseur.destroy()
             val_bruit = 0
-            if trace_m == 1:
-                print("val_bruit apres corr:", val_bruit)  # trace
+            
             appliquer_filtre(filtre, tmp_val)
     
         def tmp(val):
@@ -323,8 +288,7 @@ def ouvrir_img():
     img = Image.open(filename)
     
     mess = "Format:" + str(img.format) + ",taille:"+str(img.size) + ",mode:" + str(img.mode)
-    if trace_m == 1:
-        print(img.format, img.size, img.mode)  # info sur img   ## trace
+    
     Texte3.set(mess)  # affichage dans le label      
     fenetre.update_idletasks()  # mise à jour de l'affichage 
  
@@ -338,8 +302,7 @@ def ouvrir_img():
     else:
         Texte2.set('Patience le fichier est gros....')  # affichage dans le label
     
-    if trace_m == 1:
-        print("ouvrir img, vartest:", vartest)  # trace
+    
     fenetre.update_idletasks()  # mise à jour de l'affichage 
                                                    
     data = list(img.getdata())
@@ -373,10 +336,7 @@ def retours(sens):
     # retourne sur l'image qu'on avait avant le premier retour)
     # À FAIRE (aussi) : trouver un moyen de supprimer toutes les images temporaires quand on a finit
     global img, data, no, vartest, trace_m, max_E
-    if trace_m == 2:
-        print("retours, vartest avant modif:", vartest)  # trace
-        print("retours, max_E:", max_E)  # trace
-        print("retours, no avant modif:", no)  # trace
+    
         
     possible = 1
     if sens > 0:
@@ -390,8 +350,7 @@ def retours(sens):
     if possible == 1:
             
         no = no + sens
-        if trace_m == 2:
-            print("retours, no après modif:", no)  # trace
+        
         if no < 0:
             return
         try:
@@ -399,11 +358,9 @@ def retours(sens):
         except:
             no = no - sens
             
-        if trace_m == 2:
-            print("retours, sens:", sens)  # trace
+        
         vartest = vartest + sens
-        if trace_m == 2:
-            print("retours, vartest après modif:", vartest)  # trace
+        
         if sens < 0:
             aff_effet(vartest, "", 3)  # retour arr
         else:
