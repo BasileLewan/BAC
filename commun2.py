@@ -176,16 +176,9 @@ def defvaleur(filtre, val):
 
                             
 def effacer():
-    """Permet d'effacer l'image qui est affichée"""
-    global Canevas
-    Canevas.delete(ALL)
-
-
-def effacer_2():
     """Permet d'effacer l'image qui est affichée ainsi que labels"""
     global Canevas, vartest, effets, effets_Back, max_E, no
-
-    Canevas.delete(ALL)
+    Canevas.delete(ALL)    
     Texte3.set("")  # vide le label         
     Texte2.set("")  # vide le label   
     Texte.set("")  # vide le label 
@@ -505,7 +498,7 @@ menufichier.add_separator()
 menufichier.add_command(label="Enregistrer sous", command=exporter2)
 menufichier.add_command(label="Enregistrer", command=sauve)
 menufichier.add_separator()
-menufichier.add_command(label="Effacer", command=effacer_2)
+menufichier.add_command(label="Effacer", command=effacer)
 menufichier.add_separator()
 menufichier.add_command(label="Quitter", command=fenetre.destroy)
 menubar.add_cascade(label="Fichier", menu=menufichier)
