@@ -166,20 +166,27 @@ def defvaleur(filtre, val):
     curseur.mainloop()
 
 
-def effacer():
+def effacer(): #importat de garder les deux focntion pour l'affichage des infos de la photo
+    """Permet d'effacer l'image qui est affichée"""
+    global Canevas
+    Canevas.delete(ALL)
+
+
+def effacer_2():
     """Permet d'effacer l'image qui est affichée ainsi que labels"""
     global Canevas, vartest, effets, effets_Back, max_E, no
-    Canevas.delete(ALL)
-    Texte3.set("")  # vide le label
-    Texte2.set("")  # vide le label
-    Texte.set("")  # vide le label
-    fenetre.update_idletasks()  # mise à jour de l'affichage
 
-    vartest = 0
-    effets = []
-    effets_back = []  # À quoi ça sert ?
-    max_E = 0
-    # no = -1 # c'est impossible
+    Canevas.delete(ALL)
+    Texte3.set("")  # vide le label         
+    Texte2.set("")  # vide le label   
+    Texte.set("")  # vide le label 
+    fenetre.update_idletasks()  # mise à jour de l'affichage 
+   
+    vartest=0
+    effets=[]
+    effets_back=[]
+    max_E=0 
+    no=-1
     Texte.set("")
 
 
@@ -461,7 +468,7 @@ menufichier.add_separator()
 menufichier.add_command(label="Enregistrer sous", command=exporter)
 menufichier.add_command(label="Enregistrer", command=sauve)
 menufichier.add_separator()
-menufichier.add_command(label="Effacer", command=effacer)
+menufichier.add_command(label="Effacer", command=effacer_2)
 menufichier.add_separator()
 menufichier.add_command(label="Quitter", command=fenetre.destroy)
 menubar.add_cascade(label="Fichier", menu=menufichier)
