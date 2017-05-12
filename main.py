@@ -12,6 +12,7 @@ from PIL import Image, ImageTk  # Attention : conflit de 'Image' dans Tkinter et
 import os
 import shutil
 
+
 ####################
 # Autres fonctions #
 ####################
@@ -27,7 +28,7 @@ def afficher_img():
     ecran_W = fenetre.winfo_screenwidth()
     ecran_H = fenetre.winfo_screenheight()
 
-    if tk_img.height() > fenetre.winfo_screenheight() or tk_img.width() > fenetre.winfo_screenwidth():
+    if tk_img.height() > fenetre.winfo_screenheight() or tk_img.width() > fenetre.winfo_screenwidth():  # ?Théo
         tmp_img = Image.open("tmp_%ld.png" % no)
         if tk_img.width() > tk_img.height():
             definition = \
@@ -51,14 +52,14 @@ def afficher_img():
     fenetre.update()
 
     # règle le scroll
-    if (w + h) < (w1 + h1):  
+    if (w + h) < (w1 + h1):
         # Règle la taille du canvas par rapport à la taille de l'image
         Canevas.config(scrollregion=(0, 0, w1, h1), height=h, width=w)
     else:
         Canevas.config(scrollregion=(0, 0, w, h), height=h, width=w)
     Canevas.pack(side=LEFT)
     Canevas.create_image(0, 0, anchor=NW, image=tk_img)
-    Texte2.set('' ) # affichage dans le label
+    Texte2.set('')  # affichage dans le label
     fenetre.mainloop()
 
 
@@ -92,7 +93,7 @@ def appliquer_filtre(filtre, *val):
     print(img)
     if img is None:
         return
-    if val_bruit==0:
+    if val_bruit == 0:
         effacer()
         chargement(True)
         filtre(*val)
@@ -101,7 +102,7 @@ def appliquer_filtre(filtre, *val):
         enregistrer_img()  # On crée une nouvelle image temporaire pour chaque filtre appliqué
         tmp = str(filtre.__name__) + '({})'.format(str(*val))
         with open('tmp_preset.py', 'a') as f:
-            f.write("   {}\n".format(tmp))
+            f.write("'{}, '".format(tmp))
         chargement(False)
         aff_effet(vartest, tmp, 1)
         afficher_img()
@@ -125,30 +126,30 @@ def chargement(arg):
     effacer()
 
 
-def defvaleur(filtre, val):
+def defvaleur(filtre, val):  # ?Théo
     """demande à l'utilisateur de spécifier une valeur pour les filtres qui le nécessite"""
-    global val_bruit,img
-    
+    global val_bruit, img
+
     if img is None:  # permet de ne pas afficher la fenêtre de choix
         return
-    val_bruit=val_bruit+1
-    
-    if val_bruit == 1: # permet de ne pas pouvoir reproposer une échelle si en cours
+    val_bruit = val_bruit + 1
+
+    if val_bruit == 1:  # permet de ne pas pouvoir reproposer une échelle si en cours
         curseur = Tk()
         curseur.title("choix d'une valeur")
-    
+
         def sortie():
             global tmp_val, val_bruit
-            val_bruit=0
+            val_bruit = 0
             if tmp_val == 0:  # ne retourne pas de valeur si l'utilisateur choisit 0
                 return
             curseur.destroy()
             appliquer_filtre(filtre, tmp_val)
-    
+
         def tmp(val):
             global tmp_val
             tmp_val = int(val)
-    
+
         # 'val' permet de savoir quelle est l'échelle du curseur
         defval = (0, 100)
         echelle = Scale(curseur, from_=defval[0], to=defval[1], resolution=1, orient=HORIZONTAL, length=300, width=20,
@@ -158,32 +159,32 @@ def defvaleur(filtre, val):
         btn.pack(pady=10)
         curseur.mainloop()
     else:
-        tmp_val=0
-        
+        tmp_val = 0
+
 
 def effacer():
     """Permet d'effacer l'image qui est affichée"""
-    global Canevas
+    global Canevas, img
     Canevas.delete(ALL)
 
 
 def effacer_2():
     """Permet d'effacer l'image qui est affichée ainsi que labels"""
-    global Canevas, vartest, effets, effets_Back, max_E, no,img
+    global Canevas, vartest, effets, effets_Back, max_E, no, img
 
     Canevas.delete(ALL)
-    Texte3.set("")  # vide le label         
-    Texte2.set("")  # vide le label   
-    Texte.set("")  # vide le label 
-    fenetre.update_idletasks()  # mise à jour de l'affichage 
-   
-    vartest=0
-    effets=[]
-    effets_back=[]
-    max_E=0 
-    no=0
+    Texte3.set("")  # vide le label
+    Texte2.set("")  # vide le label
+    Texte.set("")  # vide le label
+    fenetre.update_idletasks()  # mise à jour de l'affichage
+
+    vartest = 0
+    effets = []
+    effets_back = []  # ?Théo :  la valeur dans le global a une majuscule
+    max_E = 0
+    no = 0
     Texte.set("")
-    img= None  # voir si utile
+    img = None  # voir si utile
 
 
 def enregistrer_img():
@@ -205,12 +206,15 @@ def export_preset():
     place = tkinter.filedialog.asksaveasfilename(title="Enregistrer sous...",
                                                  filetypes=[('Python', '.py')],
                                                  defaultextension='py')
+
     # Évite une erreur si l'utilisateur ne spécifie pas de fichier
     if place:
         pass
     else:
         return
-    shutil.copyfile('preset.py', place)
+    shutil.copyfile('tmp_preset.py', place)
+    with open(place, 'a') as f:
+        f.write("'enregistrer_img()']")
 
 
 def exporter():
@@ -249,12 +253,12 @@ def ouvrir_img():
         pass
     else:
         return
-    
+
     vartest = 0
     effets = []
     effets_back = []
     max_E = 0
-    no=0  
+    no = 0
 
     Texte.set("")
 
@@ -269,9 +273,9 @@ def ouvrir_img():
     mess2 = mess + ", Taille photo : " + descr
     Texte3.set(mess2)  # affichage dans le label
     if taille < 2000:
-        Texte2.set('Patience....' ) # affichage dans le label 
+        Texte2.set('Patience....')  # affichage dans le label
     else:
-        Texte2.set('Patience le fichier est volumineux....' ) # affichage dans le label 
+        Texte2.set('Patience le fichier est volumineux....')  # affichage dans le label
     fenetre.update_idletasks()  # mise à jour de l'affichage
 
     data = list(img.getdata())
@@ -291,10 +295,10 @@ def preset():
         return
     shutil.copyfile(filename, "tempreset.py")
     from tempreset import liste
-    # chrg
-    liste()
-    enregistrer_img()
-    # chrg
+    chargement(True)
+    for filtre in liste:
+        exec(filtre)
+    chargement(False)
     afficher_img()
 
 
@@ -332,6 +336,7 @@ def retours(sens):
         chargement(True)
         data = list(img.getdata())
         afficher_img()
+
 
 def sauve():
     """ Enregistre l'image à l'emplacement précédent"""
@@ -397,7 +402,7 @@ def bruit_L(valeur):
 
 
 def negatif():
-    global data, eff
+    global data
     for i in range(len(data)):
         p = data[i]
         data[i] = (255 - p[0], 255 - p[1], 255 - p[2])
@@ -436,13 +441,12 @@ bruit = ""  # pour bruit_cet bruit_l
 val_bruit = 0
 max_E = 0
 
-with open('preset.py', 'w') as f:
-    f.write('from main import noir_blanc, negatif, seuil, bruit_L, bruit_C\n')
-    f.write('def liste():\n')
+with open('tmp_preset.py', 'w') as f:
+    f.write('liste = [')
 
-##############
-## Fenêtre  ##
-##############
+############
+# Fenêtre  #
+############
 
 fenetre = Tk()
 fenetre.title("Bath Filter")  # Titre de la fenetre
@@ -511,4 +515,3 @@ s2.pack(side=BOTTOM, fill=X)
 Canevas.configure(xscrollcommand=s2.set)
 
 fenetre.mainloop()
-
