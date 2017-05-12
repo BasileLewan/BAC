@@ -102,7 +102,7 @@ def appliquer_filtre(filtre, *val):
         enregistrer_img()  # On crée une nouvelle image temporaire pour chaque filtre appliqué
         tmp = str(filtre.__name__) + '({})'.format(str(*val))
         with open('tmp_preset.py', 'a') as f:
-            f.write("'{}, '".format(tmp))
+            f.write("\'{}\', ".format(tmp))
         chargement(False)
         aff_effet(vartest, tmp, 1)
         afficher_img()
@@ -214,7 +214,7 @@ def export_preset():
         return
     shutil.copyfile('tmp_preset.py', place)
     with open(place, 'a') as f:
-        f.write("'enregistrer_img()']")
+        f.write("\'enregistrer_img()\']")
 
 
 def exporter():
