@@ -228,9 +228,9 @@ def exporter():
     """permet à l'utilisateur de sauvegarder l'image sous la forme qui lui convient"""
     global emplacement, img, imgtype
     emplacement = tkinter.filedialog.asksaveasfilename(title="Enregistrer sous...",
-                                                       filetypes=[('jpg files', '.jpg'),
+                                                       filetypes=[('png files', '.png'),
                                                                   ('bmp files', '.bmp'),
-                                                                  ('png files', '.png')],
+                                                                  ('jpg files', '.jpg')],
                                                        defaultextension='png')
     # Évite une erreur si l'utilisateur ne spécifie pas de fichier
     if emplacement:
