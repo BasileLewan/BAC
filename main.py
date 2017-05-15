@@ -285,7 +285,7 @@ def ouvrir_img():
         Texte2.set('Patience le fichier est volumineux....')  # affichage dans le label
     fenetre.update_idletasks()  # mise à jour de l'affichage
 
-    data = list(img.getdata())
+    data = list(img.getdata()) #mets les pixels de l'image dans data
     enregistrer_img()
     afficher_img()
 
