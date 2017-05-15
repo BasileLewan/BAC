@@ -89,22 +89,22 @@ def aff_effet(vartest, eff, sens_op):
 
 def appliquer_filtre(filtre, *val):
     """applique le filtre spécifié puis enregistre et affiche l'image"""
-    global vartest, max_E, val_bruit
+    global vartest, max_E
     if img is None:
         return
-    if val_bruit == 0:
-        effacer()
-        chargement(True)
-        filtre(*val)
-        vartest = vartest + 1
-        max_E = max_E + 1
-        enregistrer_img()  # On crée une nouvelle image temporaire pour chaque filtre appliqué
-        tmp = str(filtre.__name__) + '({})'.format(str(*val))
-        with open('tmp_preset.py', 'a') as f:
-            f.write("\'{}\', ".format(tmp))
-        chargement(False)
-        aff_effet(vartest, tmp, 1)
-        afficher_img()
+
+    effacer()
+    chargement(True)
+    filtre(*val)
+    vartest = vartest + 1
+    max_E = max_E + 1
+    enregistrer_img()  # On crée une nouvelle image temporaire pour chaque filtre appliqué
+    tmp = str(filtre.__name__) + '({})'.format(str(*val))
+    with open('tmp_preset.py', 'a') as f:
+        f.write("\'{}\', ".format(tmp))
+    chargement(False)
+    aff_effet(vartest, tmp, 1)
+    afficher_img()
 
 
 def aPropos():
@@ -127,7 +127,7 @@ def chargement(arg):
 
 def defvaleur(filtre, val):
     """demande à l'utilisateur de spécifier une valeur pour les filtres qui le nécessite"""
-    global val_bruit, img, defval
+    global img, defval
     try:
         defval
     except NameError:
@@ -137,14 +137,13 @@ def defvaleur(filtre, val):
 
     if img is None:  # permet de ne pas afficher la fenêtre de choix s'il n'y a pas d'image
         return
-    val_bruit = val_bruit + 1
+
 
     curseur = Tk()
     curseur.title("choix d'une valeur")
 
     def sortie():
-        global tmp_val, val_bruit, defval
-        val_bruit = 0
+        global tmp_val, defval
         del defval
         if tmp_val == 0:  # ne retourne pas de valeur si l'utilisateur choisit 0
             curseur.destro()
@@ -247,7 +246,7 @@ def exporter():
 
 def ouvrir_img():
     """Choisir une image et céer sa liste de pixels"""
-    global data, img, filename, vartest, taille, effets, effets_Back, max_E, no, val_bruit
+    global data, img, filename, vartest, taille, effets, effets_Back, max_E, no
     # global data, img,filename, vartest,s1,s2, scroll_E
 
     filename = tkinter.filedialog.askopenfilename(title="Ouvrir une image",
@@ -445,8 +444,6 @@ effets_Back = []  # pour tracer la suite des filtres appliqués
 img = None
 no = -1  # correspond au numéro qui sera affecté à chaque image temporaire
 vartest = -1  # gestion des images, -1 au départ,0 si une photo chargé, N effets
-bruit = ""  # pour bruit_cet bruit_l
-val_bruit = 0
 max_E = 0
 
 with open('tmp_preset.py', 'w') as f:
