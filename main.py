@@ -433,6 +433,21 @@ def seuil():
         else:
             data[i] = (255, 255, 255)
 
+def luminosite(valeur):
+    global data
+    for i in range(len(data)):
+        p = data[i]
+        pxl = []
+        for k in range(0, 3):
+            j =  int(p[k] + 255 * (valeur / 100))
+            if j > 255:
+                pxl.append(255)
+            elif j < 0:
+                pxl.append(0)
+            else:
+                pxl.append(j)
+        data[i] = (pxl[0], pxl[1], pxl[2])
+
 
 ###################
 # Initialisation  #
@@ -481,6 +496,7 @@ menufiltres.add_command(label="Negatif", command=lambda: appliquer_filtre(negati
 menufiltres.add_command(label="Seuil", command=lambda: appliquer_filtre(seuil))
 menufiltres.add_command(label="Bruit de chrominance", command=lambda: defvaleur(bruit_C, 1))
 menufiltres.add_command(label="Bruit de luminance", command=lambda: defvaleur(bruit_L, 1))
+menufiltres.add_command(label="Luminosité", command=lambda: defvaleur(luminosite, 0))
 menubar.add_cascade(label="Filtres", menu=menufiltres)
 
 # menu Édition :
