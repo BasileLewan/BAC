@@ -179,7 +179,7 @@ def effacer_2():
 
     vartest = 0
     effets = []
-    effets_back = []  # ?Théo :  la valeur dans le global a une majuscule
+    effets_Back = []
     max_E = 0
     no = 0
     Texte.set("")
