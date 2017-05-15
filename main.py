@@ -263,7 +263,7 @@ def ouvrir_img():
 
     vartest = 0
     effets = []
-    effets_back = []
+    effets_Back = []
     max_E = 0
     no = 0
 
