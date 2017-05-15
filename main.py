@@ -125,39 +125,48 @@ def chargement(arg):
     effacer()
 
 
-def defvaleur(filtre, val):  # ?Théo
+def defvaleur(filtre, val):
     """demande à l'utilisateur de spécifier une valeur pour les filtres qui le nécessite"""
-    global val_bruit, img
+    global val_bruit, img, defval
+    try:
+        defval
+    except NameError:
+        pass
+    else:
+        return
 
-    if img is None:  # permet de ne pas afficher la fenêtre de choix
+    if img is None:  # permet de ne pas afficher la fenêtre de choix s'il n'y a pas d'image
         return
     val_bruit = val_bruit + 1
 
-    if val_bruit == 1:  # permet de ne pas pouvoir reproposer une échelle si en cours
-        curseur = Tk()
-        curseur.title("choix d'une valeur")
+    curseur = Tk()
+    curseur.title("choix d'une valeur")
 
-        def sortie():
-            global tmp_val, val_bruit
-            val_bruit = 0
-            if tmp_val == 0:  # ne retourne pas de valeur si l'utilisateur choisit 0
-                curseur.destroy()
-                return
-            curseur.destroy()
-            appliquer_filtre(filtre, tmp_val)
+    def sortie():
+        global tmp_val, val_bruit, defval
+        val_bruit = 0
+        del defval
+        if tmp_val == 0:  # ne retourne pas de valeur si l'utilisateur choisit 0
+            curseur.destro()
+            return
+        curseur.destroy()
+        appliquer_filtre(filtre, tmp_val)
 
-        def tmp(val):
-            global tmp_val
-            tmp_val = int(val)
+    def tmp(val):
+        global tmp_val
+        tmp_val = int(val)
 
-        # 'val' permet de savoir quelle est l'échelle du curseur
+    # 'val' permet de savoir quelle est l'échelle du curseur
+    if val == 1:
         defval = (0, 100)
-        echelle = Scale(curseur, from_=defval[0], to=defval[1], resolution=1, orient=HORIZONTAL, length=300, width=20,
-                        label="valeur du filtre", tickinterval=100, variable=val, command=tmp)
-        echelle.pack(padx=10, pady=10)
-        btn = Button(curseur, text='Ok', command=sortie)
-        btn.pack(pady=10)
-        curseur.mainloop()
+    elif val == 0:
+        defval = (-100, 100)
+    echelle = Scale(curseur, from_=defval[0], to=defval[1], resolution=1, orient=HORIZONTAL, length=300, width=20,
+                    label="valeur du filtre", tickinterval=100, variable=val, command=tmp)
+    echelle.pack(padx=10, pady=10)
+    btn = Button(curseur, text='Ok', command=sortie)
+    btn.pack(pady=10)
+    curseur.mainloop()
 
 
 
