@@ -445,6 +445,20 @@ def luminosite(valeur):
                 pxl.append(j)
         data[i] = (pxl[0], pxl[1], pxl[2])
 
+def saturation(valeur):
+    global data
+    for i in range(len(data)):
+        p = data[i]
+        selec = list(data[i])
+        pxl = [p[0], p[1], p[2]]
+        selec.sort()
+        max = p.index(selec[1])
+        j =  int(max + 255 * (valeur / 100))
+        if j > 255:
+            j = 255
+        pxl[pxl.index(selec[1])] = j
+        data[i] = (pxl[0], pxl[1], pxl[2])
+
 
 ###################
 # Initialisation  #
@@ -493,6 +507,7 @@ menufiltres.add_command(label="Negatif", command=lambda: appliquer_filtre(negati
 menufiltres.add_command(label="Seuil", command=lambda: appliquer_filtre(seuil))
 menufiltres.add_command(label="Bruit de chrominance", command=lambda: defvaleur(bruit_C, 1))
 menufiltres.add_command(label="Bruit de luminance", command=lambda: defvaleur(bruit_L, 1))
+menufiltres.add_command(label="Saturation", command=lambda: defvaleur(saturation, 1))
 menufiltres.add_command(label="Luminosité", command=lambda: defvaleur(luminosite, 0))
 menubar.add_cascade(label="Filtres", menu=menufiltres)
 
