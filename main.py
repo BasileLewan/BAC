@@ -69,17 +69,17 @@ def aff_effet(vartest, eff, sens_op):
 
     if vartest >= 0:
         if vartest > len(effets):
-            effets.append(eff)
+            effets.append(eff) #ajoute effet 'eff'à la liste effets
             if sens_op == 1:
-                temp = len(effets)
+                
                 effets_Back.append(eff)
 
             if sens_op == 4:  # refaire demandé
-                temp = len(effets)
+                
 
                 effets[vartest - 1] = effets_Back[vartest - 1]  # mettre -1 à cause de l'indice
         else:
-            temp = len(effets)
+            temp = len(effets) #nombre d'élément dans la liste
 
             effets[temp - 1:] = []
             temp = len(effets)
@@ -311,10 +311,7 @@ def preset():
 
 def retours(sens):
     """remplace l'image actuelle par une image temporaire précédente, permettant de revenir sur une modification"""
-    # À FAIRE : problème : quand on retourne plusieurs fois en arrière (ex:3)  qu'on modifie un nombre inférieur de
-    # fois (ex:1) et qu'on retourne en avant, on retombe sur les images d'avant le premier retour (ex: 5-3+2 = 5 => on
-    # retourne sur l'image qu'on avait avant le premier retour)
-    # À FAIRE (aussi) : trouver un moyen de supprimer toutes les images temporaires quand on a finit
+  
     global img, data, no, vartest, max_E
 
     possible = 1
