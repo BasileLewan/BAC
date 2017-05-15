@@ -141,6 +141,7 @@ def defvaleur(filtre, val):  # ?Théo
             global tmp_val, val_bruit
             val_bruit = 0
             if tmp_val == 0:  # ne retourne pas de valeur si l'utilisateur choisit 0
+                curseur.destroy()
                 return
             curseur.destroy()
             appliquer_filtre(filtre, tmp_val)
