@@ -524,7 +524,6 @@ menuDivers.add_command(label="A propos", command=aPropos)
 menubar.add_cascade(label="Divers", menu=menuDivers)
 
 Texte3 = StringVar()
-# LabelRes3 = Label(Mafenetre, textvariable = Texte3, fg ='blue', bg= 'white')
 LabelRes3 = Label(fenetre, textvariable=Texte3, fg='blue', font=("Helvetica", 10))
 LabelRes3.pack(side=TOP, padx=1, pady=1)
 Texte2 = StringVar()
@@ -537,7 +536,7 @@ LabelResultat.pack(side=TOP, padx=1, pady=1)
 
 fenetre.geometry('600x300+0+0')  # 600 p large par 300 H  positionnée en (0, 0) sur l'écran.      #
 
-Canevas.config(scrollregion=(0, 0, 600, 300), width=600, height=300)
+Canevas.config(scrollregion=(0, 0, 600, 300), width=600, height=300) #+évite la multiplication des scrolls après plusieurs ouvertures d'images
 # scroll vertical
 s1 = Scrollbar(fenetre, command=Canevas.yview)
 s1.pack(side=RIGHT, fill=Y)
