@@ -158,8 +158,7 @@ def defvaleur(filtre, val):  # ?Théo
         btn = Button(curseur, text='Ok', command=sortie)
         btn.pack(pady=10)
         curseur.mainloop()
-    else:
-        tmp_val = 0
+
 
 
 def effacer():
