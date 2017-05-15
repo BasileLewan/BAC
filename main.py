@@ -21,14 +21,14 @@ import shutil
 def afficher_img():
     """aficher l'image dans la fenêtre"""
 
-    global Canevas, fenetre, no, s1, s2
+    global Canevas, fenetre, no
     tk_img = ImageTk.PhotoImage(file="tmp_%ld.png" % no)  # travaille avec différents types d'images
 
     # redimensionne l'image affichée selon la taille de l'écran si elle est plus grande
     ecran_W = fenetre.winfo_screenwidth()
     ecran_H = fenetre.winfo_screenheight()
 
-    if tk_img.height() > fenetre.winfo_screenheight() or tk_img.width() > fenetre.winfo_screenwidth():  # ?Théo
+    if tk_img.height() > fenetre.winfo_screenheight() or tk_img.width() > fenetre.winfo_screenwidth():
         tmp_img = Image.open("tmp_%ld.png" % no)
         if tk_img.width() > tk_img.height():
             definition = \
@@ -90,7 +90,6 @@ def aff_effet(vartest, eff, sens_op):
 def appliquer_filtre(filtre, *val):
     """applique le filtre spécifié puis enregistre et affiche l'image"""
     global vartest, max_E, val_bruit
-    print(img)
     if img is None:
         return
     if val_bruit == 0:
